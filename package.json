@@ -11,6 +11,7 @@
     "emanager:build": "vite build packages/project/emanager/ --config packages/project/emanager/vite.config.js --emptyOutDir"
   },
   "dependencies": {
+    "normalize.css": "^8.0.1",
     "vue": "^3.5.22"
   },
   "devDependencies": {
