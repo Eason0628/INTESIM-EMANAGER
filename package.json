@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "normalize.css": "^8.0.1",
-    "vue": "^3.5.22"
+    "vue": "^3.5.22",
+    "vue-router": "^4.6.3"
   },
   "devDependencies": {
     "@types/node": "^24.9.2",
