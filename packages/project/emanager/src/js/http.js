@@ -29,12 +29,12 @@ service.defaults.headers["intesim_thing_code"] = THING_CODE;
 service.interceptors.request.use(
     (config) => {
         if (config.method === 'post' && config.data) {
-            const timestamp = new Date().toISOString(); 
+            const timestamp = new Date().toISOString();
             config.data = {
                 ...config.data,
                 a1: "APP-V1vGmHA-7833111139458675592-2",
                 a2: "KEY035UvyhbsvXDuoopaM2b3H4jRRnjnBpt53gOXsdbj3",
-                t1: timestamp,  
+                t1: timestamp,
             };
         }
 
@@ -50,7 +50,13 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     (response) => {
         endLoading();
-        if (response.headers[TOKEN_KEY]) store.commit("user/setToken", response.headers[TOKEN_KEY]);
+        const token = response?.data?.data?.token || "";
+        if (token) {
+            store.commit("user/setToken", token);
+        }
+
+        // *** ORIGINAL CODE
+        // if (response.headers[TOKEN_KEY]) store.commit("user/setToken", response.headers[TOKEN_KEY]);
         return response.data;
     },
     (error) => {
