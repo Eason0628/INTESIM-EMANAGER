@@ -1,7 +1,7 @@
 import http from "../js/http";
 
 export function login(user) {
-    return http.post("pmp-eason/auth/login", user);
+    return http.post("v1/login", user);
 }
 
 export function userInfo() {

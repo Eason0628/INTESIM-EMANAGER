@@ -1,4 +1,4 @@
-import  store  from "@/store/index";
+import store from "@/store/index";
 import { message } from "ant-design-vue";
 import { TOKEN_KEY, THING_CODE } from "@/js/constant";
 import axios from "axios";
@@ -28,6 +28,16 @@ service.defaults.headers["intesim_thing_code"] = THING_CODE;
 
 service.interceptors.request.use(
     (config) => {
+        if (config.method === 'post' && config.data) {
+            const timestamp = new Date().toISOString(); 
+            config.data = {
+                ...config.data,
+                a1: "APP-V1vGmHA-7833111139458675592-2",
+                a2: "KEY035UvyhbsvXDuoopaM2b3H4jRRnjnBpt53gOXsdbj3",
+                t1: timestamp,  
+            };
+        }
+
         config.headers[TOKEN_KEY] = store.getters["user/token"];
         startLoading();
         return config;
