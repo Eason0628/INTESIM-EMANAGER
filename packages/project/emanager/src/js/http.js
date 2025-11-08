@@ -1,4 +1,4 @@
-import { store } from "@/store/index";
+import  store  from "@/store/index";
 import { message } from "ant-design-vue";
 import { TOKEN_KEY, THING_CODE } from "@/js/constant";
 import axios from "axios";

@@ -42,6 +42,7 @@ import { useRouter } from "vue-router";
 import { reactive, ref, toRefs } from "vue";
 import { encrypt, decrypt } from "@/js/aes";
 import { Icon } from "@common/components/icons";
+import { login } from "@/service/auth";
 
 export default {
     components: { Icon },
