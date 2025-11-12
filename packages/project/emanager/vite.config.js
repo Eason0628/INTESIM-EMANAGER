@@ -21,7 +21,7 @@ export default defineConfig({
     host: '0.0.0.0',
     proxy: {
       "/api": {
-        target: "https://open.datadex.com.cn/dexserver/dex-api",
+        target: "https://open.datadex.com.cn/dexserver/dex-api/v1",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },

@@ -1,7 +1,7 @@
 import http from "../js/http";
 
 export function login(user) {
-    return http.post("v1/userLogin", user);
+    return http.post("userLogin", user);
 }
 
 export function userInfo() {

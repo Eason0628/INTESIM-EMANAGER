@@ -1,9 +1,8 @@
 <template>
     <a-layout>
         <Header />
-        <a-layout>
-            <!-- <a-layout-content >Content</a-layout-content>
-                    <a-layout-footer >Footer</a-layout-footer> -->
+        <a-layout hasSider>
+            <!-- <a-layout-content>Content</a-layout-content> -->
         </a-layout>
     </a-layout>
 

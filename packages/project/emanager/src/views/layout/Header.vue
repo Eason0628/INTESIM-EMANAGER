@@ -5,10 +5,10 @@
             <h1>{{ title }}</h1>
         </div>
         <div>
-            <div>
+            <!-- <div>
                 <Icon icon="FullscreenExitOutlined" v-if="isFull" @click="full"></Icon>
                 <Icon icon="FullscreenOutlined" v-else @click="full"></Icon>
-            </div>
+            </div> -->
             <!-- <div>
                 {{ $store.getters["user/userInfo"].userRealname }}
                 <Icon icon="UserOutlined"></Icon>
@@ -33,7 +33,6 @@ export default defineComponent({
     setup() {
         let state = reactive({
             isFull: false,
-            // imgSrc: "/images/Logo_ht.png",
             imgSrc: "/images/Logo_p.png",
             title: "仿真数据管理平台", 
         });
