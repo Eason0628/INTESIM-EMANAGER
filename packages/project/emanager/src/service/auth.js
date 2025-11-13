@@ -4,12 +4,12 @@ export function login(user) {
     return http.post("userLogin", user);
 }
 
-export function userInfo() {
-    return http.get("pmp-eason/sys/user/logger");
+export function getUserInfo() {
+    return http.get("userInfo");
 }
 
 export function logout() {
-    return http.post("pmp-eason/auth/logout");
+    return http.post("userLogout");
 }
 
 export function changePs(data) {

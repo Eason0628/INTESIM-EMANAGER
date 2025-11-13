@@ -23,8 +23,8 @@
 
 <script>
 import { useStore } from "vuex";
-import { logout } from "@/service/auth"; 
-import { Icon } from "@common/components/icons"; 
+import { logout } from "@/service/auth";
+import { Icon } from "@common/components/icons";
 import { defineComponent, nextTick, onMounted, reactive, toRefs } from "vue";
 
 export default defineComponent({
@@ -34,11 +34,18 @@ export default defineComponent({
         let state = reactive({
             isFull: false,
             imgSrc: "/images/Logo_p.png",
-            title: "仿真数据管理平台", 
+            title: "仿真数据管理平台",
         });
 
+        let logout = () => {
+            logout().then(() => {
+                store.commit("user/setToken", "");
+                sessionStorage.removeItem("ROUTES");
+            });
+        }
         return {
             ...toRefs(state),
+            logout
         };
     },
 });
