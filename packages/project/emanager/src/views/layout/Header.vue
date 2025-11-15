@@ -31,17 +31,19 @@ export default defineComponent({
     components: { Icon },
     name: "HeaderView",
     setup() {
+        const store = useStore();
+
         let state = reactive({
             isFull: false,
             imgSrc: "/images/Logo_p.png",
             title: "仿真数据管理平台",
         });
-
         let logout = () => {
-            logout().then(() => {
-                store.commit("user/setToken", "");
-                sessionStorage.removeItem("ROUTES");
-            });
+            // *** ORIGINAL CODE
+            // logout().then(() => {});
+            store.commit("user/setToken", "");
+            sessionStorage.removeItem("ROUTES");
+            router.push("/login");
         }
         return {
             ...toRefs(state),

@@ -28,7 +28,7 @@ service.defaults.headers["intesim_thing_code"] = THING_CODE;
 
 service.interceptors.request.use(
     (config) => {
-        if (config.method === 'post' && config.data) {
+        if (config.method === 'post') {
             const timestamp = new Date().toISOString();
             config.data = {
                 ...config.data,
@@ -37,7 +37,6 @@ service.interceptors.request.use(
                 t1: timestamp,
             };
         }
-
         config.headers[TOKEN_KEY] = store.getters["user/token"];
         startLoading();
         return config;

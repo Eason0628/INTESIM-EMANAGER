@@ -27,3 +27,15 @@ export function list2tree(
     return tree;
 }
 
+export function tree2list(arr: any[]) {
+    let stack = arr;
+    let data: any[] = [];
+    while (stack.length) {
+      let { children, ...item } = stack.pop();
+      data.push(item);
+      if (children)
+        for (let i = children.length - 1; i >= 0; i--) stack.push(children[i]);
+    }
+    return data;
+  }
+  

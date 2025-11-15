@@ -2,7 +2,8 @@
     <a-layout>
         <Header />
         <a-layout hasSider>
-            <!-- <a-layout-content>Content</a-layout-content> -->
+            <Sider />
+            <TabPanelView />
         </a-layout>
     </a-layout>
 
@@ -11,6 +12,8 @@
 
 <script setup>
 import Header from "./Header.vue";
+import Sider from "./Sider.vue";
+import TabPanelView from "./TabPanelView.vue";
 </script>
 
 <style lang="less" scoped>

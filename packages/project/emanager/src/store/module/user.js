@@ -1,6 +1,6 @@
 import { TOKEN_KEY } from "@/js/constant";
 import { getUserMenus } from "@/service/menu";
-import { list2tree } from "@/js/util";
+import { list2tree } from "@common/ts/util";
 import { getUserInfo } from "@/service/auth";
 
 const routeAllPathToCompMap = import.meta.glob(`@/views/**/*.vue`);
@@ -69,16 +69,14 @@ export default {
         },
         setMenus(state, val) {
             state.menus = val;
-        },
-        setRoutes(state, val) {
-            state.routes = val;
-        },
+        }
     }, actions: {
         SetMenus({ commit }) {
             return new Promise((resolve, reject) => {
                 getUserMenus()
                     .then((res) => {
-                        console.log(res)
+                        debugger;
+                        console.log(res);
                         if (!res.data) return;
                         let data = tree2list(res.data);
                         data.forEach((t) => {
@@ -100,7 +98,6 @@ export default {
                     .catch((error) => {
                         reject(error);
                     });
-
                 getUserInfo().then((res) => {
                     if (!res.data) return;
                     commit("setUserInfo", res.data);
@@ -119,10 +116,15 @@ export default {
         },
         route(state) {
             return state.route;
-        }, userInfo(state) {
+        },
+        userInfo(state) {
             return state.userInfo;
-        }, permissions(state) {
+        },
+        permissions(state) {
             return state.permissions;
+        },
+        menus(state) {
+            return state.menus;
         },
     }
 }
