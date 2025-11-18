@@ -2,12 +2,21 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Login from '@/views/login/index.vue'
 import MainWindow from "@/views/layout/index.vue";
 import store from "../store/index";
+import DashBoard from "@/views/layout/Dashboard.vue";
+import { DASHBOARD_URL } from "./constant";
 
 const routes = [
   {
     path: "/",
     name: "index",
     component: MainWindow,
+    redirect: DASHBOARD_URL, // /layout/dashboard
+    children: [{
+      path: DASHBOARD_URL,
+      component: DashBoard,
+      name: "menu.staging",
+      meta: { closable: false },
+    }]
   },
   {
     path: "/login",
