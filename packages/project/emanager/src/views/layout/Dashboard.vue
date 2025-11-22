@@ -50,7 +50,7 @@
 <script>
 import { Icon } from "@common/components/icons";
 import { defineComponent, onMounted, reactive, toRefs } from "vue";
-import Plotly from "plotly.js/dist/plotly";
+// import Plotly from "plotly.js/dist/plotly";
 
 export default defineComponent({
     name: "dashboardView",
@@ -157,9 +157,9 @@ export default defineComponent({
                 }, ],
             };
 
-            Plotly.newPlot(state.container, data, layout, {
-                displayModeBar: false,
-            });
+            // Plotly.newPlot(state.container, data, layout, {
+            //     displayModeBar: false,
+            // });
         });
 
         onMounted(() => {

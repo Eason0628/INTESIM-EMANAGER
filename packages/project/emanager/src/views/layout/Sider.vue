@@ -1,149 +1,191 @@
 <template>
-    <a-layout-sider :width="width" v-model:collapsed="collapsed" collapsible :collapsedWidth="0" theme="light"
-        class="menuLayout">
-        <a-menu mode="inline" :openKeys="openKeys" v-model:selectedKeys="selectedKeys" @openChange="onOpenChange">
-            <template v-for="item in $store.getters['user/menus'].sort((t1, t2) => t1.sortNum - t2.sortNum)">
+    <a-layout-sider width="256px" :collapsed="collapsed" collapsible collapsedWidth="80px" class="menuLayout"
+        :trigger="null" @collapse="onCollapse">
+        <a-menu v-model:openKeys="openKeys" v-model:selectedKeys="selectedKeys" mode="inline" theme="dark"
+            :inline-collapsed="collapsed">
+            <template v-for="item in items">
                 <template v-if="!item.children || !item.children.length">
-                    <a-menu-item :key="item.menuId">
+                    <a-menu-item :key="item.key">
                         <template #icon>
-                            <Icon :icon="item.meta.icon" />
+                            <component :is="item.icon" />
                         </template>
                         <template v-if="item.path">
-                            <a v-if="item.menuType === 5" :href="item.path" target="_blank" rel="noopener noreferrer">{{
-                                $t(item.name) }}</a>
-                            <router-link v-else :to="item.path">{{ $t(item.name) }}</router-link>
+                            <router-link :to="item.path">{{ item.title }}</router-link>
                         </template>
-                        <template v-else>{{ $t(item.name) }}</template>
+                        <template v-else>{{ item.title }}</template>
                     </a-menu-item>
                 </template>
                 <template v-else>
-                    <sub-menu :menu="item" :key="item.menuId" />
+                    <sider-subMenu :menu="item" :key="item.key" />
                 </template>
             </template>
         </a-menu>
-
-        <template #trigger>
-            <left-outlined></left-outlined>
-        </template>
+        <div class="custom-trigger" @click="toggleCollapsed">
+            <RightOutlined v-if="collapsed" />
+            <LeftOutlined v-else />
+        </div>
     </a-layout-sider>
 </template>
 
 <script>
-import { useStore } from "vuex";
-import { tree2list } from "@common/ts/util";
-import { Icon } from "@common/components/icons";
-import { LeftOutlined } from "@ant-design/icons-vue";
-import { defineComponent, onMounted, reactive, toRefs, watch } from "vue";
-import SubMenu from "./SubMenu.vue";
+import { reactive, watch, toRefs } from 'vue';
+import SiderSubMenu from './SiderSubMenu.vue';
+import {
+    PieChartOutlined,
+    MailOutlined,
+    DesktopOutlined,
+    InboxOutlined,
+    AppstoreOutlined,
+    RightOutlined,
+    LeftOutlined,
+} from '@ant-design/icons-vue';
 
-export default defineComponent({
+export default {
     components: {
-        Icon,
-        SubMenu,
+        SiderSubMenu,
+        RightOutlined,
         LeftOutlined,
     },
-    name: "SiderView",
-    props: {
-        width: {
-            type: Number,
-            default: 240,
-        },
-    },
     setup() {
-        const store = useStore();
-        let state = reactive({
+        const state = reactive({
             collapsed: false,
-            openKeys: [],
-            rootSubmenuKeys: [],
-            selectedKeys: [],
-            menuList: [],
+            selectedKeys: ['1'],
+            openKeys: ['sub1'],
+            preOpenKeys: ['sub1'],
         });
-
-        onMounted(() => {
-            let menuList = JSON.parse(JSON.stringify(store.getters["user/menus"]));
-            state.menuList = tree2list(menuList);
-            state.selectedKeys = store.getters["menu/getSelecteKeys"];
-            state.openKeys = store.getters["menu/getOpenKeys"];
-            showNowPage(store.getters["user/route"]);
-        });
+        const items = reactive([
+            {
+                key: '1',
+                icon: PieChartOutlined,
+                label: 'Option 1',
+                title: 'Option 1',
+                path: '/testA',
+            },
+            {
+                key: '2',
+                icon: DesktopOutlined,
+                label: 'Option 2',
+                title: 'Option 2',
+                path: '/testB',
+            },
+            {
+                key: '3',
+                icon: InboxOutlined,
+                label: 'Option 3',
+                title: 'Option 3',
+            },
+            {
+                key: 'sub1',
+                icon: MailOutlined,
+                label: 'Navigation One',
+                title: 'Navigation One',
+                children: [
+                    {
+                        key: '5',
+                        label: 'Option 5',
+                        title: 'Option 5',
+                    },
+                    {
+                        key: '6',
+                        label: 'Option 6',
+                        title: 'Option 6',
+                    },
+                    {
+                        key: '7',
+                        label: 'Option 7',
+                        title: 'Option 7',
+                    },
+                    {
+                        key: '8',
+                        label: 'Option 8',
+                        title: 'Option 8',
+                    },
+                ],
+            },
+            {
+                key: 'sub2',
+                icon: AppstoreOutlined,
+                label: 'Navigation Two',
+                title: 'Navigation Two',
+                children: [
+                    {
+                        key: '9',
+                        label: 'Option 9',
+                        title: 'Option 9',
+                    },
+                    {
+                        key: '10',
+                        label: 'Option 10',
+                        title: 'Option 10',
+                    },
+                    {
+                        key: 'sub3',
+                        label: 'Submenu',
+                        title: 'Submenu',
+                        icon: AppstoreOutlined,
+                        children: [
+                            {
+                                key: '11',
+                                label: 'Option 11',
+                                title: 'Option 11',
+                            },
+                            {
+                                key: '12',
+                                label: 'Option 12',
+                                title: 'Option 12',
+                            },
+                        ],
+                    },
+                ],
+            },
+        ]);
 
         watch(
-            () => store.getters["user/route"],
-            (val) => {
-                showNowPage(val);
-            }
+            () => state.openKeys,
+            (_val, oldVal) => {
+                state.preOpenKeys = oldVal;
+            },
         );
-        // 更新选中菜单状态
-        watch(() => store.getters['menu/getSelecteKeys'],
-            (val) => {
-                state.selectedKeys = val
-                onOpenChange(state.selectedKeys)
-            },
-        )
-        watch(() => store.getters['menu/getOpenKeys'],
-            (val) => {
-                state.openKeys = val
-            },
-        )
 
-        const showNowPage = (val) => {
-            if (!val) return;
-            let selectMenu = state.menuList.find((value) => val.path == value.path);
-            if (selectMenu) {
-                state.selectedKeys = [selectMenu?.menuId];
-                store.dispatch('menu/updateSelectedKeys', [selectMenu?.menuId])
-                // 菜单打开状态更新
-                state.openKeys = [];
-                store.dispatch('menu/updateOpendKeys', [])
-                let menuParentId = selectMenu?.menuParentId;
-                while (menuParentId) {
-                    state.openKeys.unshift(menuParentId);
-                    store.dispatch('menu/updateOpendKeys', state.openKeys)
-                    menuParentId = state.menuList.find((value) => value.menuId == menuParentId)?.menuParentId;
-                }
-            } else {
-                state.selectedKeys = [];
-                state.openKeys = [];
-                store.dispatch('menu/updateSelectedKeys', [])
-                store.dispatch('menu/updateOpendKeys', [])
-            }
+        const toggleCollapsed = () => {
+            onCollapse(!state.collapsed);
         };
 
-        const getRootKey = () => {
-            store.getters["user/menus"].forEach((val) => state.rootSubmenuKeys.push(val.menuId));
+        const onCollapse = (collapsed) => {
+            state.collapsed = collapsed;
+            state.openKeys = collapsed ? [] : state.preOpenKeys;
         };
-
-        const onOpenChange = (openKeys) => {
-            const latestOpenKey = openKeys.find((key) => state.openKeys.indexOf(key) === -1);
-
-            if (state.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
-                state.openKeys = openKeys;
-            } else {
-                state.openKeys = latestOpenKey ? [latestOpenKey] : [];
-            }
-        };
-
-        getRootKey();
-
         return {
             ...toRefs(state),
-            onOpenChange,
-            onCollapsed: () => {
-                state.collapsed = !state.collapsed;
-            },
-        };
+            items,
+            toggleCollapsed
+        }
     }
-});
-</script>
+}
 
+</script>
 
 <style lang="less" scoped>
 .ant-layout-sider {
     box-shadow: 1px 0 6px rgb(0 0 0 / 20%);
+    background: url(/images/menuBack.png);
+    position: relative;
 }
 
-.menuLayout {
-    background: url(/images/menuBack.png);
+.custom-trigger {
+    position: absolute;
+    top: 200px;
+    right: -16px;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 0 6px rgba(0, 0, 0, .2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
 }
 
 :deep(.ant-menu-root) {
@@ -218,38 +260,5 @@ export default defineComponent({
             }
         }
     }
-}
-
-:deep(.ant-menu-inline) .ant-menu-item::after {
-    border: none;
-}
-
-:deep(.ant-layout-sider-zero-width-trigger) {
-    width: 16px !important;
-    height: 32px !important;
-    line-height: 32px !important;
-    right: -16px !important;
-    top: 50% !important;
-    transform: translateY(-50%);
-    border-radius: 0 16px 16px 0 !important;
-    border-top: 1px solid var(--border-color-split);
-    border-right: 1px solid var(--border-color-split);
-    border-bottom: 1px solid var(--border-color-split);
-    transition: all 0.3s;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-:deep(.ant-layout-sider-zero-width-trigger):hover {
-    color: var(--primary-color);
-}
-
-:deep(.ant-layout-sider-zero-width-trigger) .anticon {
-    transform: translate(-3px);
-    transition: all 0.3s ease-in-out;
-}
-
-.ant-layout-sider-collapsed .ant-layout-sider-zero-width-trigger .anticon {
-    transform: rotate(180deg) translateX(5px);
 }
 </style>
