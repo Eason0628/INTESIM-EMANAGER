@@ -109,7 +109,7 @@ export default {
                 },
                 {
                     "menuId": 4,
-                    "menuName": "menu.mulu",
+                    "menuName": "menu.system",
                     "menuIcon": "AppleOutlined",
                     "menuType": 0,
                     "menuUrl": "",
@@ -119,7 +119,7 @@ export default {
                     "children": [
                         {
                             "menuId": 5,
-                            "menuName": "menu.fileone",
+                            "menuName": "menu.data_management",
                             "menuIcon": "FormatPainterOutlined",
                             "menuType": 0,
                             "menuUrl": "",
@@ -129,11 +129,11 @@ export default {
                             "children": [
                                 {
                                     "menuId": 6,
-                                    "menuName": "menu.pageone",
+                                    "menuName": "menu.data_copy",
                                     "menuIcon": "AlertOutlined",
                                     "menuType": 1,
-                                    "menuUrl": "/menu/pageone",
-                                    "menuWinformName": "test/02.vue",
+                                    "menuUrl": "/data/management",
+                                    "menuWinformName": "system/data/management/index.vue",
                                     "sortNum": 6,
                                     "menuParentId": 5,
                                     "children": []
@@ -142,7 +142,7 @@ export default {
                         },
                         {
                             "menuId": 7,
-                            "menuName": "menu.filetwo",
+                            "menuName": "menu.user_management",
                             "menuIcon": "FilePdfOutlined",
                             "menuType": 0,
                             "menuUrl": "",
@@ -152,22 +152,22 @@ export default {
                             "children": [
                                 {
                                     "menuId": 8,
-                                    "menuName": "menu.pagethree",
+                                    "menuName": "menu.user_authority",
                                     "menuIcon": "AuditOutlined",
                                     "menuType": 1,
-                                    "menuUrl": "/menu/pagethree",
-                                    "menuWinformName": "test/index.vue",
+                                    "menuUrl": "/user/authority",
+                                    "menuWinformName": "system/user/authority/index.vue",
                                     "sortNum": 8,
                                     "menuParentId": 7,
                                     "children": []
                                 },
                                 {
                                     "menuId": 9,
-                                    "menuName": "menu.pagetwo",
+                                    "menuName": "menu.user_rule",
                                     "menuIcon": "AlertOutlined",
                                     "menuType": 1,
-                                    "menuUrl": "/menu/pagetwo",
-                                    "menuWinformName": "test/03.vue",
+                                    "menuUrl": "/user/rule",
+                                    "menuWinformName": "system/user/rule/index.vue",
                                     "sortNum": 9,
                                     "menuParentId": 7,
                                     "children": []

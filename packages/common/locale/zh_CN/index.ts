@@ -241,6 +241,11 @@ export default {
     tool_integration: "工具集成",
     tool_application: "工具应用",
     tool_management: "工具管理",
+    system: "系统管理",
+    data_management: "数据管理",
+    user_management: "用户管理",
+    user_authority: "用户权限",
+    user_rule: "用户角色",
   },
   //header
   header: {

@@ -58,9 +58,15 @@ export default {
             showNowPage(store.getters["user/route"]);
         });
 
-        
+        watch(
+            () => store.getters["user/route"],
+            (val) => {
+                showNowPage(val);
+            }
+        );
 
         const showNowPage = (val) => {
+            debugger;
             if (!val) return;
             let selectMenu = state.menuList.find((value) => val.path == value.path);
             if (selectMenu) {

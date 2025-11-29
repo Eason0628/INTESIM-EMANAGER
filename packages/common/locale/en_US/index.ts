@@ -251,6 +251,11 @@ export default {
     tool_integration: "Tool Integration",
     tool_application: "Tool Application",
     tool_management: "Tool Management",
+    system: "System Management",
+    data_management: "Data Management",
+    user_management: "User Management",
+    user_authority: "User Authority",
+    user_rule: "User Role",
   },
 
   //header
