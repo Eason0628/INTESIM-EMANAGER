@@ -3,7 +3,10 @@
         <Header />
         <a-layout hasSider>
             <Sider />
-            <TabPanelView />
+            <a-layout-content>
+                <tabs-card />
+                <tab-panel-view />
+            </a-layout-content>
         </a-layout>
     </a-layout>
 
@@ -13,6 +16,7 @@
 <script setup>
 import Header from "./Header.vue";
 import Sider from "./Sider.vue";
+import TabsCard from "./TabsCard.vue";
 import TabPanelView from "./TabPanelView.vue";
 </script>
 

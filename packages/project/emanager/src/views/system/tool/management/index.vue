@@ -1,5 +1,5 @@
 <template>
     <div>
-        <h1>toolOne</h1>
+        <h1>工具管理</h1>
     </div>
 </template>

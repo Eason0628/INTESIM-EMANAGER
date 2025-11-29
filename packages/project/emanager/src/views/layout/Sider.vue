@@ -1,164 +1,91 @@
 <template>
     <a-layout-sider width="256px" :collapsed="collapsed" collapsible collapsedWidth="80px" class="menuLayout"
-        :trigger="null" @collapse="onCollapse">
+        :trigger="null">
         <a-menu v-model:openKeys="openKeys" v-model:selectedKeys="selectedKeys" mode="inline" theme="dark"
             :inline-collapsed="collapsed">
-            <template v-for="item in items">
+            <template v-for="item in $store.getters['user/menus'].sort((t1, t2) => t1.sortNum - t2.sortNum)">
                 <template v-if="!item.children || !item.children.length">
-                    <a-menu-item :key="item.key">
+                    <a-menu-item :key="item.menuId">
                         <template #icon>
-                            <component :is="item.icon" />
+                            <component :is="item.meta.icon" />
                         </template>
                         <template v-if="item.path">
-                            <router-link :to="item.path">{{ item.title }}</router-link>
+                            <router-link :to="item.path">{{ $t(item.name) }}</router-link>
                         </template>
-                        <template v-else>{{ item.title }}</template>
+                        <template v-else>{{ $t(item.name) }}</template>
                     </a-menu-item>
                 </template>
                 <template v-else>
-                    <sider-subMenu :menu="item" :key="item.key" />
+                    <sider-subMenu :menu="item" :key="item.menuId" />
                 </template>
             </template>
         </a-menu>
-        <div class="custom-trigger" @click="toggleCollapsed">
-            <RightOutlined v-if="collapsed" />
-            <LeftOutlined v-else />
-        </div>
+        <template #trigger>
+            <left-outlined></left-outlined>
+        </template>
     </a-layout-sider>
 </template>
 
 <script>
-import { reactive, watch, toRefs } from 'vue';
+import { useStore } from "vuex";
+import { tree2list } from "@common/ts/util";
+import { reactive, watch, toRefs, onMounted } from 'vue';
 import SiderSubMenu from './SiderSubMenu.vue';
 import {
-    PieChartOutlined,
-    MailOutlined,
-    DesktopOutlined,
-    InboxOutlined,
-    AppstoreOutlined,
-    RightOutlined,
     LeftOutlined,
 } from '@ant-design/icons-vue';
 
 export default {
     components: {
         SiderSubMenu,
-        RightOutlined,
         LeftOutlined,
     },
     setup() {
-        const state = reactive({
+        const store = useStore();
+        let state = reactive({
             collapsed: false,
-            selectedKeys: ['1'],
-            openKeys: ['sub1'],
-            preOpenKeys: ['sub1'],
+            openKeys: [],
+            rootSubmenuKeys: [],
+            selectedKeys: [],
+            menuList: [],
         });
-        const items = reactive([
-            {
-                key: '1',
-                icon: PieChartOutlined,
-                label: 'Option 1',
-                title: 'Option 1',
-                path: '/testA',
-            },
-            {
-                key: '2',
-                icon: DesktopOutlined,
-                label: 'Option 2',
-                title: 'Option 2',
-                path: '/testB',
-            },
-            {
-                key: '3',
-                icon: InboxOutlined,
-                label: 'Option 3',
-                title: 'Option 3',
-            },
-            {
-                key: 'sub1',
-                icon: MailOutlined,
-                label: 'Navigation One',
-                title: 'Navigation One',
-                children: [
-                    {
-                        key: '5',
-                        label: 'Option 5',
-                        title: 'Option 5',
-                    },
-                    {
-                        key: '6',
-                        label: 'Option 6',
-                        title: 'Option 6',
-                    },
-                    {
-                        key: '7',
-                        label: 'Option 7',
-                        title: 'Option 7',
-                    },
-                    {
-                        key: '8',
-                        label: 'Option 8',
-                        title: 'Option 8',
-                    },
-                ],
-            },
-            {
-                key: 'sub2',
-                icon: AppstoreOutlined,
-                label: 'Navigation Two',
-                title: 'Navigation Two',
-                children: [
-                    {
-                        key: '9',
-                        label: 'Option 9',
-                        title: 'Option 9',
-                    },
-                    {
-                        key: '10',
-                        label: 'Option 10',
-                        title: 'Option 10',
-                    },
-                    {
-                        key: 'sub3',
-                        label: 'Submenu',
-                        title: 'Submenu',
-                        icon: AppstoreOutlined,
-                        children: [
-                            {
-                                key: '11',
-                                label: 'Option 11',
-                                title: 'Option 11',
-                            },
-                            {
-                                key: '12',
-                                label: 'Option 12',
-                                title: 'Option 12',
-                            },
-                        ],
-                    },
-                ],
-            },
-        ]);
 
-        watch(
-            () => state.openKeys,
-            (_val, oldVal) => {
-                state.preOpenKeys = oldVal;
-            },
-        );
+        onMounted(() => {
+            let menuList = JSON.parse(JSON.stringify(store.getters["user/menus"]));
+            state.menuList = tree2list(menuList);
+            state.selectedKeys = store.getters["menu/getSelecteKeys"];
+            state.openKeys = store.getters["menu/getOpenKeys"];
+            showNowPage(store.getters["user/route"]);
+        });
 
-        const toggleCollapsed = () => {
-            onCollapse(!state.collapsed);
+        
+
+        const showNowPage = (val) => {
+            if (!val) return;
+            let selectMenu = state.menuList.find((value) => val.path == value.path);
+            if (selectMenu) {
+                state.selectedKeys = [selectMenu?.menuId];
+                store.dispatch('menu/updateSelectedKeys', [selectMenu?.menuId])
+                // 菜单打开状态更新
+                state.openKeys = [];
+                store.dispatch('menu/updateOpendKeys', [])
+                let menuParentId = selectMenu?.menuParentId;
+                while (menuParentId) {
+                    state.openKeys.unshift(menuParentId);
+                    store.dispatch('menu/updateOpendKeys', state.openKeys)
+                    menuParentId = state.menuList.find((value) => value.menuId == menuParentId)?.menuParentId;
+                }
+            } else {
+                state.selectedKeys = [];
+                state.openKeys = [];
+                store.dispatch('menu/updateSelectedKeys', [])
+                store.dispatch('menu/updateOpendKeys', [])
+            }
         };
 
-        const onCollapse = (collapsed) => {
-            state.collapsed = collapsed;
-            state.openKeys = collapsed ? [] : state.preOpenKeys;
-        };
+
         return {
-            ...toRefs(state),
-            items,
-            toggleCollapsed
+            ...toRefs(state)
         }
     }
 }
@@ -188,77 +115,76 @@ export default {
     z-index: 10;
 }
 
+/* 所有菜单项: 默认渐变背景（非最后一层） */
+:deep(.ant-menu-item),
+:deep(.ant-menu-submenu-title) {
+    color: #000;
+    background: linear-gradient(to right, #b2e1f8, #7acaf2);
+    margin: 5px 20px !important;
+    width: calc(100% - 40px);
+    border-radius: 8px;
+
+    &:hover,
+    &:focus {
+        background: linear-gradient(to right, #45b7f0, #1591d0);
+        color: #000;
+    }
+
+    .ant-menu-title-content a {
+        color: #000;
+    }
+
+    &.ant-menu-item-selected {
+        background: linear-gradient(to right, #45b7f0, #1591d0);
+        color: #fff;
+
+        .router-link-active {
+            color: #fff;
+        }
+    }
+}
+
+/*  最后一层菜单项（叶子节点）背景透明 + 保留 hover 和选中效果 */
+:deep(.ant-menu-sub .ant-menu-item) {
+    background: transparent !important;
+    color: #000 !important;
+
+    &:hover,
+    &:focus {
+        background: transparent !important;
+        color: var(--primary-color) !important;
+
+        .ant-menu-title-content a {
+            color: var(--primary-color) !important;
+        }
+    }
+
+    &.ant-menu-item-selected {
+        background: transparent !important;
+        color: var(--primary-color) !important;
+
+        .router-link-active,
+        .router-link-exact-active {
+            color: var(--primary-color) !important;
+        }
+
+        &:after {
+            display: none !important;
+        }
+    }
+}
+
+/* 次级菜单容器透明 */
+:deep(.ant-menu-sub) {
+    background: transparent !important;
+}
+
+/* 根菜单容器透明 */
 :deep(.ant-menu-root) {
     margin-top: 5px;
     background: transparent;
     height: calc(100% - 5px);
     overflow-x: hidden;
     overflow-y: auto;
-
-    &>.ant-menu-item,
-    .ant-menu-submenu-title {
-        color: #000;
-        background: linear-gradient(to right, #b2e1f8, #7acaf2);
-        margin: 5px 20px;
-        width: calc(100% - 40px);
-        border-radius: 8px;
-
-        &:hover,
-        &:focus {
-            background: linear-gradient(to right, #45b7f0, #1591d0);
-            color: #000;
-        }
-
-        .ant-menu-title-content a {
-            color: #000;
-        }
-
-        &.ant-menu-item-selected {
-            background: linear-gradient(to right, #45b7f0, #1591d0);
-            color: #fff;
-
-            .router-link-active {
-                color: #fff;
-            }
-        }
-    }
-
-    .ant-menu-submenu-title {
-        margin-bottom: 0 !important;
-    }
-
-    .ant-menu-sub {
-        background: transparent;
-
-        .ant-menu-item {
-            background: transparent;
-
-            &:hover,
-            &:focus {
-                color: var(--primary-color);
-                background: transparent;
-
-                .ant-menu-title-content a {
-                    color: var(--primary-color);
-                }
-            }
-
-            &.ant-menu-item-selected {
-                color: var(--primary-color);
-
-                a {
-                    color: #000;
-                }
-
-                .router-link-exact-active {
-                    color: var(--primary-color);
-                }
-
-                &:after {
-                    display: none;
-                }
-            }
-        }
-    }
 }
 </style>

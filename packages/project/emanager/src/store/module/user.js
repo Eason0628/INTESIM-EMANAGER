@@ -71,39 +71,170 @@ export default {
             state.menus = val;
         }
     }, actions: {
-        SetMenus({ commit }) {
-            return new Promise((resolve, reject) => {
-                getUserMenus()
-                    .then((res) => {
-                        debugger;
-                        console.log(res);
-                        if (!res.data) return;
-                        let data = tree2list(res.data);
-                        data.forEach((t) => {
-                            if (t.path && !t.path.startsWith("/layout")) t.path = "/layout" + t.path;
-                        });
-                        commit("setMenus", list2tree(data, "menuId", "menuParentId", "children"));
-                        commit("setRoutes", data);
-                        data.forEach((r) => {
-                            if (r.component) {
-                                try {
-                                    r.component = routeAllPathToCompMap[`/src/views/${r.component}`];
-                                } catch {
-                                    r.component = null;
+        async SetMenus({ commit }) {
+            let menuData = [
+                {
+                    "menuId": 1,
+                    "menuName": "menu.tool_integration",
+                    "menuIcon": "ApartmentOutlined",
+                    "menuType": 0,
+                    "menuUrl": "",
+                    "menuWinformName": "",
+                    "sortNum": 1,
+                    "menuParentId": 0,
+                    "children": [
+                        {
+                            "menuId": 2,
+                            "menuName": "menu.tool_application",
+                            "menuIcon": "ApiOutlined",
+                            "menuType": 1,
+                            "menuUrl": "/tool/application",
+                            "menuWinformName": "system/tool/application/index.vue",
+                            "sortNum": 2,
+                            "menuParentId": 1,
+                            "children": []
+                        },
+                        {
+                            "menuId": 3,
+                            "menuName": "menu.tool_management",
+                            "menuIcon": "AimOutlined",
+                            "menuType": 1,
+                            "menuUrl": "/tool/management",
+                            "menuWinformName": "system/tool/management/index.vue",
+                            "sortNum": 3,
+                            "menuParentId": 1,
+                            "children": []
+                        }
+                    ]
+                },
+                {
+                    "menuId": 4,
+                    "menuName": "menu.mulu",
+                    "menuIcon": "AppleOutlined",
+                    "menuType": 0,
+                    "menuUrl": "",
+                    "menuWinformName": "",
+                    "sortNum": 4,
+                    "menuParentId": 0,
+                    "children": [
+                        {
+                            "menuId": 5,
+                            "menuName": "menu.fileone",
+                            "menuIcon": "FormatPainterOutlined",
+                            "menuType": 0,
+                            "menuUrl": "",
+                            "menuWinformName": "",
+                            "sortNum": 5,
+                            "menuParentId": 4,
+                            "children": [
+                                {
+                                    "menuId": 6,
+                                    "menuName": "menu.pageone",
+                                    "menuIcon": "AlertOutlined",
+                                    "menuType": 1,
+                                    "menuUrl": "/menu/pageone",
+                                    "menuWinformName": "test/02.vue",
+                                    "sortNum": 6,
+                                    "menuParentId": 5,
+                                    "children": []
                                 }
-                            }
-                        });
-                        resolve(data);
-                    })
-                    .catch((error) => {
-                        reject(error);
-                    });
-                getUserInfo().then((res) => {
-                    if (!res.data) return;
-                    commit("setUserInfo", res.data);
-                });
+                            ]
+                        },
+                        {
+                            "menuId": 7,
+                            "menuName": "menu.filetwo",
+                            "menuIcon": "FilePdfOutlined",
+                            "menuType": 0,
+                            "menuUrl": "",
+                            "menuWinformName": "",
+                            "sortNum": 7,
+                            "menuParentId": 4,
+                            "children": [
+                                {
+                                    "menuId": 8,
+                                    "menuName": "menu.pagethree",
+                                    "menuIcon": "AuditOutlined",
+                                    "menuType": 1,
+                                    "menuUrl": "/menu/pagethree",
+                                    "menuWinformName": "test/index.vue",
+                                    "sortNum": 8,
+                                    "menuParentId": 7,
+                                    "children": []
+                                },
+                                {
+                                    "menuId": 9,
+                                    "menuName": "menu.pagetwo",
+                                    "menuIcon": "AlertOutlined",
+                                    "menuType": 1,
+                                    "menuUrl": "/menu/pagetwo",
+                                    "menuWinformName": "test/03.vue",
+                                    "sortNum": 9,
+                                    "menuParentId": 7,
+                                    "children": []
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ];
+
+            let data = tree2list(menuData);
+            data.forEach((t) => {
+                if (t.path && !t.path.startsWith("/layout")) {
+                    t.path = "/layout" + t.path;
+                }
             });
-        },
+            commit("setMenus", list2tree(data, "menuId", "menuParentId", "children"));
+            commit("setRoutes", data);
+
+            data.forEach((r) => {
+                if (r.component) {
+                    try {
+                        r.component = routeAllPathToCompMap[`/src/views/${r.component}`];
+                    } catch {
+                        r.component = null;
+                    }
+                }
+            });
+
+            const res = await getUserInfo();
+            if (res?.data) commit("setUserInfo", res.data);
+            return data;
+        }
+
+        // SetMenus({ commit }) {
+        //     return new Promise((resolve, reject) => {
+        //         getUserMenus()
+        //             .then((res) => {
+        //                 debugger;
+        //                 console.log(res);
+        //                 if (!res.data) return;
+        //                 let data = tree2list(res.data);
+        //                 data.forEach((t) => {
+        //                     if (t.path && !t.path.startsWith("/layout")) t.path = "/layout" + t.path;
+        //                 });
+        //                 commit("setMenus", list2tree(data, "menuId", "menuParentId", "children"));
+        //                 commit("setRoutes", data);
+        //                 data.forEach((r) => {
+        //                     if (r.component) {
+        //                         try {
+        //                             r.component = routeAllPathToCompMap[`/src/views/${r.component}`];
+        //                         } catch {
+        //                             r.component = null;
+        //                         }
+        //                     }
+        //                 });
+        //                 resolve(data);
+        //             })
+        //             .catch((error) => {
+        //                 reject(error);
+        //             });
+        //         getUserInfo().then((res) => {
+        //             if (!res.data) return;
+        //             commit("setUserInfo", res.data);
+        //         });
+        //     });
+        // },
     }, getters: {
         token(state) {
             return state.token;
