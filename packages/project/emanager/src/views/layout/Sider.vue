@@ -65,8 +65,21 @@ export default {
             }
         );
 
+        // 更新选中菜单状态
+        watch(() => store.getters['menu/getSelecteKeys'],
+            (val) => {
+                state.selectedKeys = val
+                onOpenChange(state.selectedKeys)
+            },
+        )
+        watch(() => store.getters['menu/getOpenKeys'],
+            (val) => {
+                state.openKeys = val
+            },
+        )
+
+
         const showNowPage = (val) => {
-            debugger;
             if (!val) return;
             let selectMenu = state.menuList.find((value) => val.path == value.path);
             if (selectMenu) {
@@ -89,13 +102,29 @@ export default {
             }
         };
 
+        const getRootKey = () => {
+            store.getters["user/menus"].forEach((val) => state.rootSubmenuKeys.push(val.menuId));
+        };
+
+        const onOpenChange = (openKeys) => {
+            const latestOpenKey = openKeys.find((key) => state.openKeys.indexOf(key) === -1);
+
+            if (state.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
+                state.openKeys = openKeys;
+            } else {
+                state.openKeys = latestOpenKey ? [latestOpenKey] : [];
+            }
+        };
+
+        getRootKey();
+
 
         return {
-            ...toRefs(state)
-        }
+            ...toRefs(state),
+            onOpenChange,
+        };
     }
 }
-
 </script>
 
 <style lang="less" scoped>

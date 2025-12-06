@@ -60,7 +60,9 @@ router.beforeEach((to, from, next) => {
       next();
       store.commit("user/setRoute", to);
     }
-    else next({ path: "/login", query: { redirect: to.fullPath } });
+    else {
+      next({ path: "/login", query: { redirect: to.fullPath } });
+    }
   }
 });
 

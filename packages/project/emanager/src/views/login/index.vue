@@ -51,7 +51,7 @@ export default {
         const { t } = useI18n();
         const formRef = ref();
         const router = useRouter();
-           
+
         let state = reactive({
             curYear: new Date().getFullYear(),
             user: {
@@ -73,14 +73,17 @@ export default {
                     if (state.rememberMe)
                         setCookit(state.user.user, state.user.password, 7);
                     else setCookit("", "", -1);
-                    if (router.currentRoute.value.query.redirect)
+                    if (router.currentRoute.value.query.redirect) {
                         router.push(router.currentRoute.value.query.redirect);
-                    else router.push("/");
+                    }
+                    else {
+                        router.push("/");
+                    }
                     sessionStorage.removeItem("ROUTES");
                     localStorage.setItem('userIp', res.data.userIp)
                 });
             })
-            .catch(() => {});
+                .catch(() => { });
         };
 
         const getCookie = () => {

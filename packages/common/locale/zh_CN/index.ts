@@ -243,6 +243,7 @@ export default {
     tool_management: "工具管理",
     system: "系统管理",
     data_management: "数据管理",
+    data_copy: "数据拷贝",
     user_management: "用户管理",
     user_authority: "用户权限",
     user_rule: "用户角色",

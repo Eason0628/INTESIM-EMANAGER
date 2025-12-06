@@ -252,7 +252,7 @@ export default {
     tool_application: "Tool Application",
     tool_management: "Tool Management",
     system: "System Management",
-    data_management: "Data Management",
+    data_copy: "Data Copy",
     user_management: "User Management",
     user_authority: "User Authority",
     user_rule: "User Role",
